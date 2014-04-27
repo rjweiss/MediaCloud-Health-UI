@@ -14,6 +14,7 @@ from app import app_views
 @app.route('/')
 def index():
     content = flask.render_template('progress.html')
+    #content = flask.render_template('histogram_view.html')
     return flask.render_template('main.html', content=content)
 
 @app.route('/api/login', methods=['POST'])

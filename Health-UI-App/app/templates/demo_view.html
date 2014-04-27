@@ -1,63 +1,61 @@
 <script id="tpl-demo-view" type="text/template">
-    <div class="row">
-        <div class="col-sm-12">
-            <h1>Heading 1</h1>
-            <h2>Heading 2</h2>
-            <h3>Heading 3</h3>
-            <h4>Heading 4</h4>
-            <h5>Heading 5</h5>
-            <h6>Heading 6</h6>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-sm-12">
-            <div class="form form-default" role="form">
-                <div class="form-group">
-                    <label>Input</label>
-                    <input class="form-control"/>
-                    <span class="help-block">Enter text in this box.</span>
-                </div>
-                <div class="form-group">
-                    <label>Select</label>
-                    <select class="form-control">
-                        <option>Option 1</option>
-                    </select>
-                    <span class="help-block">Enter text in this box.</span>
-                </div>
-                <div class="form-group">
-                    <label>Textarea</label>
-                    <textarea class="form-control">
-Lorem ipsum dolor sit amet.
-                    </textarea>
-                    <span class="help-block">Enter text in this box.</span>
-                </div>
-                <div class="form-group">
-                    <label>Select</label>
-                    <select class="form-control">
-                        <option>Option 1</option>
-                    </select>
-                    <span class="help-block">Enter text in this box.</span>
-                </div>
-                <div class="checkbox">
-                    <label>
-                        <input type="checkbox" value=""/>
-                        Option one is this and that&mdash;be sure to include why it's great
-                    </label>
-                </div>
-                <div class="radio">
-                    <label>
-                        <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked="checked"/>
-                        Option one is this and that&mdash;be sure to include why it's great
-                    </label>
-                </div>
-                <div class="radio">
-                    <label>
-                        <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2"/>
-                        Option two can be something else and selecting it will deselect option one
-                    </label>
-                </div>
-                <input class="btn btn-primary" type="submit"/>
-            </div>
-        </div>
-    </div>
+<div id="chart-hist-count"></div>
+
+<div class="row">
+	<div class="col-lg-1 center-block">
+	<script type="text/javascript">
+
+//define dc barchart object
+    var countHistChart  = dc.barChart("#chart-hist-count");
+// load data
+	d3.json("static/data/counts.json", function(countData) {
+    countData.forEach(function (d) {
+        d.Date = Date.parse(d.Date);
+    });
+
+// get min/max dates
+    var dates = []
+    countData.forEach(function (d) {
+        dates.push(d.Date)
+    });
+    var minDate = new Date(Math.min.apply(null, dates));
+    var maxDate = new Date(Math.max.apply(null, dates));
+
+//setup crossfilter
+
+var ndx = crossfilter(countData),
+            dateDim = ndx.dimension(function (d) {
+                return +d.Date;
+            }),
+            countPerDate = dateDim.group().reduceSum(function (d) {
+                return +d.Count;
+            });
+
+// map crossfilter to dc object?
+    countHistChart
+            .width(1000).height(400)
+            .dimension(dateDim)
+            .group(countPerDate)
+            .x(d3.time.scale().domain([minDate, maxDate]))
+//        .round(d3.time.day.round)
+//        .xUnits(d3.time.day)
+            .elasticY(true);
+
+    countHistChart.xAxis().ticks(dates.length / 10);
+//countHistChart.yAxis().ticks(20);
+
+// fix axis labels and hardcode padding
+    countHistChart.margins({ top: 10, left: 100, right: 100, bottom: 75 })
+            .renderlet(function (chart) {
+                chart.selectAll("g.x text")
+                        .attr('dx', '-25')
+                        .attr('transform', "rotate(-90)");
+            })
+
+
+dc.renderAll();
+	});
+	</script>
+</div>
+</div>
 </script>

@@ -141,3 +141,13 @@ App.DemoView = App.NestedView.extend({
         this.$el.html(this.template());
     }
 })
+
+App.HistogramView = App.NestedView.extend({
+	template: _.template($('#tpl-histogram-view').html()),
+	initialize: function(options) {
+		this.render();
+	},
+	render: function () {
+		this.$el.html(this.template());
+	}
+})
