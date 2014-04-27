@@ -12,7 +12,7 @@ def publishDateRange(d1, d2):
 def zi_time(d):
 	return datetime.datetime.combine(d, datetime.time.min).isoformat() + "Z"
 
-mc = mediacloud.api.MediaCloud() # apikey goes in MediaCloud()
+mc = mediacloud.api.MediaCloud() # API key goes here
 
 # Keywords To Query
 mc_query = u'*'
